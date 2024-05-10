@@ -25,6 +25,7 @@ class Pet {
         this.age = 0;
         this.alive = true;
     }
+    
     public setEnergy(value: number) {
         if(value <= 0){
             this.energy = 0;
