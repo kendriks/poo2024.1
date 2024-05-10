@@ -26,48 +26,47 @@ class Pet {
         this.alive = true;
     }
     public setEnergy(value: number) {
-        if(value < 0){
+        if(value <= 0){
             this.energy = 0;
             console.log("fail: pet morreu de fraqueza");
             this.alive = false;
-            return;
         } else if(value > this.energyMax){
             this.energy = this.energyMax;
-            return;
-        }
-        this.energy = value;
+        } else {
+            this.energy = value;
+        } 
     }
 
     public setHungry(value: number) {
-        if(value < 0){
+        if(value <= 0){
             this.hungry = 0;
             console.log("fail: pet morreu de fome");
             this.alive = false;
-            return;
         } else if(value > this.hungryMax){
             this.hungry = this.hungryMax;
-            return;
-        }
-        this.hungry = value;    
+        } else {
+        this.hungry = value;   
+        } 
     }
 
     public setClean(value: number) {
-        if(value < 0){
+        if(value <= 0){
             this.clean = 0;
             console.log("fail: pet morreu de sujeira");
             this.alive = false;
-            return;
         } else if(value > this.cleanMax){
             this.clean = this.cleanMax;
-            return;
+        } else {
+            this.clean = value;
         }
-        this.clean = value;
     }
 
     public setDiamonds(value: number) {
-        
+        this.diamonds = value;
     }
+
     public setAge(value: number) {
+        this.age = value;
     }
 
     public toString(): string {
@@ -88,23 +87,28 @@ class Pet {
     }
 
     public getCleanMax() {
-        return this.cleanMax.
+        return this.cleanMax;
     }
     public getHungryMax() {
-        this.hungryMax;
+        return this.hungryMax;
     }
     public getEnergyMax() {
         return this.energyMax
     }
 
     public getDiamonds() {
-        return this.diamonds.
+        return this.diamonds;
     }
     public getAge() {
         return this.age;
     }
     public isAlive() {
-        
+        if (!this.alive) {
+            console.log("fail: pet esta morto");
+            return false;
+        } else {
+            return true;
+        }
     }
 }
 
@@ -115,10 +119,12 @@ class Game {
     constructor(pet: Pet) {
         this.pet = pet;
     }
+
     //se estiver morto, avise e retorne false
     private testAlive(): boolean {
-        
+        return this.pet.isAlive();
     }
+   
     public play() {
         if (!this.testAlive()) 
             return;
@@ -128,17 +134,41 @@ class Game {
         this.pet.setAge(this.pet.getAge() + 1);
         this.pet.setDiamonds(this.pet.getDiamonds() + 1);
     }
-    public shower() {
-    }
-    public eat() {
-    }
-    public sleep() {
 
+    public shower() {
+        if (!this.testAlive()) 
+            return;
+        this.pet.setEnergy(this.pet.getEnergy() - 3);
+        this.pet.setHungry(this.pet.getHungry() - 1);
+        this.pet.setClean(this.pet.getCleanMax());
+        this.pet.setAge(this.pet.getAge() + 2);
+    }
+
+    public eat() {
+        if (!this.testAlive()) 
+            return;
+        this.pet.setEnergy(this.pet.getEnergy() - 1);
+        this.pet.setHungry(this.pet.getHungry() + 4);
+        this.pet.setClean(this.pet.getClean() - 2);
+        this.pet.setAge(this.pet.getAge() + 1);
+    }
+
+    public sleep() {
+        if (!this.testAlive()) 
+            return;
+
+        if (this.pet.getEnergyMax() - this.pet.getEnergy() < 5) {
+            console.log("fail: nao esta com sono");
+            return;
+        }
+        this.pet.setEnergy(this.pet.getEnergyMax());
+        this.pet.setHungry(this.pet.getHungry() - 1);
+        this.pet.setAge(this.pet.getAge() + 5);
     }
     toString() {
+        return this.pet.toString();
     }
 }
-
 
 let _cin_ : string[] = [];
 try { _cin_ = require("fs").readFileSync(0).toString().split(/\r?\n/); } catch(e){}
