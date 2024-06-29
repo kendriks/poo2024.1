@@ -42,7 +42,6 @@ class Lead {
 }
 
 class Pencil {
-    //calibre
     private thickness: number;
     private tip: Lead | null; //lead da ponta
     private barrel: Array<Lead> = new Array<Lead>(); //grafites no cano
@@ -53,84 +52,74 @@ class Pencil {
         this.barrel = [];
     }
 
-    public hasGrafite(): boolean{
-        if(this.tip !== null){
-            console.log("fail: ja existe grafite");
-            return false;
-        }
-        return true;
-    }
-
     public insert(lead: Lead): boolean {
-        if(!this.hasGrafite()) {
-            console.log("fail: nao existe grafite");
-            return false;
-        }
-        if(this.thickness !== lead.getThickness()) {
+        //verifica se o calibre é diferente
+        if (lead.getThickness() != this.thickness) {
             console.log("fail: calibre incompatível");
             return false;
         }
-        /*push: 
-         -adiciona um ou mais elementos ao final do array
-         -retorna comprimento do novo array
-        */
+        //adiciona ponta ao cano(array)
         this.barrel.push(lead);
         return true;
     }
 
     public remove(): Lead | null {
-        if(!this.tip) {
-            console.log("fail: nao existe grafite no bico");
+        //verifica se há grafite no bico
+        if (!this.tip) {
             return null;
         }
-        this.tip = null;
+        //remove ponta e a retorna
+        let pontaRemovida = this.tip;
+        this.tip = null; 
+        return pontaRemovida;
     }
 
     public pull(): boolean {
-        if(this.barrel.length === 0) {
-            console.log("fail: nao existe grafite no tambor");
-            return false;
-        }
-        //pop: retorna e remove último elemento do array
-        //shift: remove e retorna o primeiro elemento de um array
-        const verificationShift = this.barrel.shift();
-        if(verificationShift === undefined){
-            return false;
-        }
-        if(this.tip !== null) {
+        //verifica se há grafite no bico
+        if (this.tip !== null) {
             console.log("fail: ja existe grafite no bico");
-            //push: adiciona elemento no final do array
-            //unshift: adiciona elemento no início do array
-            this.barrel.unshift(verificationShift);
             return false;
-        } 
-        this.tip = verificationShift;
-        return true;
+        }
+
+        //verifica tamanho do array(quantas pontas há)
+        if (this.barrel.length < 0) {
+            console.log("fail: nao há grafites no tambor");
+            return false;
+        } else {
+            //shift: remove primeiro elemento do cano(array)
+            this.tip = this.barrel.shift() || null;
+            return true;
+        }
+        
+
     }
 
     public writePage(): void {
-        if(this.tip == null) {
+        //verifica se há grafite no bico
+        if (this.tip === null) {
             console.log("fail: nao existe grafite no bico");
             return;
-        } else{
-            const usagePerPage = this.tip.usagePerSheet();
-            if(this.tip.getSize()  <= 10) {
-                console.log("fail: tamanho insuficiente");
-                return;
-            } 
-            if(this.tip.getSize() - usagePerPage < 10) {
-                console.log("fail: folha incompleta");
-                this.tip.setSize(10);
-                return;
-            } else {
-                if(this.tip.getSize() < usagePerPage) {
-                    console.log("fail: grafite insuficiente para escrever uma página");
-                    return;
-                }
-                this.tip.setSize(this.tip.getSize() - usagePerPage);
-            }
+        } 
+        
+        //condições quando tamanho do grafite for igual a 10
+        if (this.tip.getSize() === 10)  {
+            console.log("fail: tamanho insuficiente");
+            return;
+        } 
+
+        //condição quando o tamanho do grafite menos o grafite usado for menor que 10
+        const usoPorFolha = this.tip.usagePerSheet();
+        if ((this.tip.getSize() - usoPorFolha) < 10) {
+            this.tip.setSize(10);
+            console.log("fail: folha incompleta");
+            return;
         }
+
+        //atualiza tamanho do grafite
+        this.tip.setSize(this.tip.getSize() - usoPorFolha);
     }
+
+
     public toString(): string {
         let saida =  "calibre: " + this.thickness + ", bico: " +
                 (this.tip != null ? "[" + this.tip + "]" : "[]") + ", tambor: {";
